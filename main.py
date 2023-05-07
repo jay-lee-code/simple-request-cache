@@ -9,6 +9,7 @@ app = Flask(__name__)
 con = sqlite3.connect("cache.db")
 cur = con.cursor()
 
+port = 5123
 # described in seconds:
 max_elapsed = 60 * 60 * 24 * 30
 
@@ -29,6 +30,12 @@ if __name__ == "__main__":
         required=False
     )
     parser.add_argument(
+        "--maxelapsed",
+        help="max time (integer seconds) before invalidating cache",
+        type=int,
+        required=False
+    )
+    parser.add_argument(
         "--baseurl",
         help="base url prefix for all requests",
         required=False
@@ -44,8 +51,9 @@ if __name__ == "__main__":
 
     if args.port:
         port = args.port
-    else:
-        port = 5123
+
+    if args.maxelapsed:
+        max_elapsed = args.maxelapsed
 
     create_table()
     app.run(port=port, debug=args.nodebug)
