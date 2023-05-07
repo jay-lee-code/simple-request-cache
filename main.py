@@ -12,7 +12,7 @@ cur = con.cursor()
 port = 5123
 # described in seconds:
 max_elapsed = 60 * 60 * 24 * 30
-
+debug = True
 
 def create_table():
     cur.execute(
@@ -51,6 +51,10 @@ def catch_all(path):
     print(path)
 
     cached_req = get_cache(path)
+    if cached_req:
+        if debug:
+            print("Using cached request data.")
+
     print(cached_req)
 
     replace_cache(path, "test", 0)
@@ -79,7 +83,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--nodebug",
-        action="store_false",
+        action="store_true",
         help="disables hot reloading and debug messages",
         required=False
     )
@@ -91,6 +95,8 @@ if __name__ == "__main__":
 
     if args.maxelapsed:
         max_elapsed = args.maxelapsed
+    
+    debug = not args.nodebug
 
     create_table()
-    app.run(port=port, debug=args.nodebug)
+    app.run(port=port, debug=debug)
