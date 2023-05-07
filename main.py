@@ -6,7 +6,7 @@ from flask import Flask, abort
 
 app = Flask(__name__)
 
-con = sqlite3.connect("cache.db")
+con = sqlite3.connect("cache.db", check_same_thread=False)
 cur = con.cursor()
 
 port = 5123
@@ -19,6 +19,43 @@ def create_table():
         "CREATE TABLE IF NOT EXISTS web_requests (url TEXT PRIMARY KEY, data BLOB, timestamp INTEGER);"
     )
 
+
+def get_cache(url):
+    res = cur.execute("SELECT ? FROM web_requests;", (url,))
+    data = res.fetchone()
+
+    # add timestamp check
+    if data is None:
+        return None
+
+    # todo fix to return data
+    return res.fetchone()
+
+
+def replace_cache(url, data, timestamp):
+    cur.execute(
+        "REPLACE INTO web_requests(url, data, timestamp) VALUES(?, ?, ?);",
+        (url, data, timestamp)
+    )
+    con.commit()
+    pass
+
+
+# catch all routes, source: https://stackoverflow.com/a/45777812
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    if path == 'favicon.ico':
+        return ''
+    
+    print(path)
+
+    cached_req = get_cache(path)
+    print(cached_req)
+
+    replace_cache(path, "test", 0)
+
+    return(str(path))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
