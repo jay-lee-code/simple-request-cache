@@ -45,22 +45,26 @@ def replace_cache(url, data, timestamp):
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-    if path == 'favicon.ico':
+    # ignore extremely short strings like favicon
+    if len(path) < 12:
         return ''
-
-    print(path)
 
     cached_req = get_cache(path)
     if cached_req:
         if debug:
             print("Using cached request data.")
         return json.loads(cached_req[0])
+    elif debug:
+        print("No valid cached data found, making request.")
 
-    
+    r = requests.get(path)
 
-    replace_cache(path, json.dumps({"test": "value1"}), 0)
+    if r.status_code > 299:
+        abort(r.status_code)
 
-    return(str(path))
+    replace_cache(path, json.dumps(r.json()), int(time.time()))
+
+    return r.json()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
