@@ -40,7 +40,7 @@ For example, in response to `localhost:5123/https://malpedia.caad.fkie.fraunhofe
 
 along with a status code of 200. If the request failed, then whatever status code was given by the requester's URL is returned with no modification.
 
-After a successful call, all repeat calls to the same URL within the next 30 days will yield the same result. The persistence data is stored in SQLite file named `cache.db`, which is created when `main.py` is first run.
+After a successful call, all repeat calls to the same URL within the next 30 days will yield the same result. The persistent data is stored in a SQLite file named `cache.db`, which is created when `python main.py` is first run.
 
 ## C. UML Sequence Diagram
 
