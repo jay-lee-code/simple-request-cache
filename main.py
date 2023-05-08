@@ -14,6 +14,7 @@ port = 5123
 # described in seconds:
 max_elapsed = 60 * 60 * 24 * 30
 debug = True
+baseurl = ""
 
 
 def create_table():
@@ -45,9 +46,12 @@ def replace_cache(url, data, timestamp):
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
+    path = baseurl + path
     # ignore extremely short strings like favicon
     if len(path) < 12:
         return ''
+
+    print(path)
 
     cached_req = get_cache(path)
     if cached_req:
@@ -100,6 +104,9 @@ if __name__ == "__main__":
 
     if args.maxelapsed:
         max_elapsed = args.maxelapsed
+
+    if args.baseurl:
+        baseurl += args.baseurl
 
     debug = not args.nodebug
 
