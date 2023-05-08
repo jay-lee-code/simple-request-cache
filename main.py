@@ -1,5 +1,6 @@
 import requests
 import time
+import json
 import argparse
 import sqlite3
 from flask import Flask, abort
@@ -14,22 +15,22 @@ port = 5123
 max_elapsed = 60 * 60 * 24 * 30
 debug = True
 
+
 def create_table():
     cur.execute(
-        "CREATE TABLE IF NOT EXISTS web_requests (url TEXT PRIMARY KEY, data BLOB, timestamp INTEGER);"
+        "CREATE TABLE IF NOT EXISTS web_requests (url TEXT PRIMARY KEY, data TEXT, timestamp INTEGER);"
     )
 
 
 def get_cache(url):
-    res = cur.execute("SELECT ? FROM web_requests;", (url,))
+    res = cur.execute('SELECT * FROM web_requests WHERE "url" = ?;', (url,))
     data = res.fetchone()
 
     # add timestamp check
     if data is None:
         return None
 
-    # todo fix to return data
-    return res.fetchone()
+    return data[1:]
 
 
 def replace_cache(url, data, timestamp):
@@ -47,17 +48,18 @@ def replace_cache(url, data, timestamp):
 def catch_all(path):
     if path == 'favicon.ico':
         return ''
-    
+
     print(path)
 
     cached_req = get_cache(path)
     if cached_req:
         if debug:
             print("Using cached request data.")
+        return json.loads(cached_req[0])
 
     print(cached_req)
 
-    replace_cache(path, "test", 0)
+    replace_cache(path, json.dumps({"test": "value1"}), 0)
 
     return(str(path))
 
@@ -95,7 +97,7 @@ if __name__ == "__main__":
 
     if args.maxelapsed:
         max_elapsed = args.maxelapsed
-    
+
     debug = not args.nodebug
 
     create_table()
