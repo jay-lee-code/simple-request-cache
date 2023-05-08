@@ -26,8 +26,7 @@ def get_cache(url):
     res = cur.execute('SELECT * FROM web_requests WHERE "url" = ?;', (url,))
     data = res.fetchone()
 
-    # add timestamp check
-    if data is None:
+    if data is None or (time.time() - data[2] > max_elapsed):
         return None
 
     return data[1:]
@@ -57,7 +56,7 @@ def catch_all(path):
             print("Using cached request data.")
         return json.loads(cached_req[0])
 
-    print(cached_req)
+    
 
     replace_cache(path, json.dumps({"test": "value1"}), 0)
 
