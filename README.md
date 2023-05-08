@@ -9,7 +9,7 @@ To run this microservice locally, install Python 3.6+ and then download or clone
 From there, the simplest way to use this microservice is by typing:
 `python main.py` (or `python3 main.py` for some users) to start the microservice locally on port 5123.
 
-# A. To request data from this microservice
+## A. To request data from this microservice
 
 Make a GET request for the web API that you want to use by appending the URL to localhost:5123.
 
@@ -22,7 +22,7 @@ or
 
 This microservice will then receive the request with the expectation that it is JSON (other Content-Type headers are not supported).
 
-# B. To receive data from this microservice
+## B. To receive data from this microservice
 
 To receive data, the requester must accept a JSON response that is in the format of whatever the external service that the requester sent gave.
 
@@ -42,11 +42,11 @@ along with a status code of 200. If the request failed, then whatever status cod
 
 After a successful call, all repeat calls to the same URL within the next 30 days will yield the same result. The persistence data is stored in SQLite file named `cache.db`, which is created when `main.py` is first run.
 
-# C. UML Sequence Diagram
+## C. UML Sequence Diagram
 
 ![UML Sequence Diagram](diagram.png)
 
-# Other information
+## Other information
 
 If the user wants to modify the cache invalidation period, add a base URL string, or change the port number used by this microservice, this can be done via command line arguments. 
 
