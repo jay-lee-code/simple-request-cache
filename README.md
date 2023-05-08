@@ -42,9 +42,9 @@ along with a status code of 200. If the request failed, then whatever status cod
 
 After a successful call, all repeat calls to the same URL within the next 30 days will yield the same result. The persistence data is stored in SQLite file named `cache.db`, which is created when `main.py` is first run.
 
-# C. UML Sequence
+# C. UML Sequence Diagram
 
-
+![UML Sequence Diagram](diagram.png)
 
 # Other information
 
