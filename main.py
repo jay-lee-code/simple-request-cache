@@ -61,14 +61,17 @@ def catch_all(path):
     elif debug:
         print("No valid cached data found, making request.")
 
-    r = requests.get(path)
+    try:
+        r = requests.get(path)
 
-    if r.status_code > 299:
-        abort(r.status_code)
+        if not r.ok:
+            abort(r.status_code)
+        else:
+            replace_cache(path, json.dumps(r.json()), int(time.time()))
 
-    replace_cache(path, json.dumps(r.json()), int(time.time()))
-
-    return r.json()
+            return r.json()
+    except:
+        abort(500)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
